@@ -37,7 +37,7 @@ class AbstractAuthEngine(object):
     @staticmethod
     def _create_token_pair(
         user_id: UUID,
-    ) -> tuple[str, str]:
+    ) -> tuple:
         user_id_str = str(user_id)
         access_token = jwt.encode(
             {

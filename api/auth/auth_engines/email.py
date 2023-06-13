@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class EmailAuthEngine(AbstractAuthEngine):
     __identity__ = "email"
 
-    def _get_info(self, credentials: dict, requires_password=True) -> tuple[str, str, Optional[Type[AbstractUser]]]:
+    def _get_info(self, credentials: dict, requires_password=True) -> "tuple[str, str, Optional[Type[AbstractUser]]]":
         """Parse common params for engine and try to find user in database
         :type credentials: dict
         :type requires_password: bool
@@ -33,7 +33,7 @@ class EmailAuthEngine(AbstractAuthEngine):
         user = self.db_session.query(AbstractUser).filter(AbstractUser.email == email).first()
         return email, password, user
 
-    def authenticate(self, credentials: dict) -> tuple[str, str, Type[AbstractUser]]:
+    def authenticate(self, credentials: dict) -> "tuple[str, str, Type[AbstractUser]]":
         """Authenticate user with provided credentials
         :type credentials: dict
         :return: Type[AbstractUser]

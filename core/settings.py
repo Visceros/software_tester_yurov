@@ -4,6 +4,9 @@ import logging
 import warnings
 from pathlib import Path
 from urllib.parse import urljoin
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Lamb Framework
 from lamb.json import JsonEncoder
@@ -24,7 +27,8 @@ warnings.filterwarnings("default", category=urllib3.exceptions.InsecureRequestWa
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = dpath_value(os.environ, "APP_API_SECRET_KEY", str)
+#SECRET_KEY = dpath_value(os.environ, "APP_API_SECRET_KEY", str)
+SECRET_KEY = os.getenv("APP_API_SECRET_KEY")
 
 # Static folders and urls
 LAMB_STATIC_FOLDER = os.path.join(BASE_DIR, "static/")
@@ -40,10 +44,14 @@ LAMB_LOG_FOLDER = os.path.join(BASE_DIR, "log")
 LAMB_CRT_FOLDER = os.path.join(BASE_DIR, "crt")
 LAMB_BKP_FOLDER = os.path.join(BASE_DIR, "bkp")
 
-PORT = dpath_value(os.environ, "APP_API_PORT", int)
-DEBUG = dpath_value(os.environ, "APP_DEBUG", str, transform=transform_boolean, default=False)
-SCHEME = dpath_value(os.environ, "APP_API_SCHEME", str)
-ALLOWED_HOSTS = dpath_value(os.environ, "APP_ALLOWED_HOSTS", str, transform=tf_list_string)
+#PORT = dpath_value(os.environ, "APP_API_PORT", int)
+#DEBUG = dpath_value(os.environ, "APP_DEBUG", str, transform=transform_boolean, default=False)
+#SCHEME = dpath_value(os.environ, "APP_API_SCHEME", str)
+#ALLOWED_HOSTS = dpath_value(os.environ, "APP_ALLOWED_HOSTS", str, transform=tf_list_string)
+PORT = int(os.getenv("APP_API_PORT"))
+DEBUG = os.getenv("APP_DEBUG")
+SCHEME = os.getenv("APP_API_SCHEME")
+ALLOWED_HOSTS = tuple(os.getenv("APP_ALLOWED_HOSTS").split(','))
 HOST = ALLOWED_HOSTS[0]
 
 # config host and port
@@ -59,6 +67,7 @@ LAMB_SYSTEM_STATIC_URL = urljoin(f"{SCHEME}://{STATIC_HOST}", "/system-static/")
 INSTALLED_APPS = [
     "lamb",
     "api",
+    "django_coverage"
 ]
 
 LAMB_RESPONSE_APPLY_TO_APPS = [
@@ -97,9 +106,12 @@ TEMPLATES = [
 WSGI_APPLICATION = "core.wsgi.application"
 
 # redis
-APP_REDIS_BASE_HOST = dpath_value(os.environ, "APP_REDIS_BASE_HOST", str)
-APP_REDIS_BASE_PORT = dpath_value(os.environ, "APP_REDIS_BASE_PORT", int, transform=validate_port)
-APP_REDIS_BASE_PASS = dpath_value(os.environ, "APP_REDIS_BASE_PASS", str)
+# APP_REDIS_BASE_HOST = dpath_value(os.environ, "APP_REDIS_BASE_HOST", str)
+# APP_REDIS_BASE_PORT = dpath_value(os.environ, "APP_REDIS_BASE_PORT", int, transform=validate_port)
+# APP_REDIS_BASE_PASS = dpath_value(os.environ, "APP_REDIS_BASE_PASS", str)
+APP_REDIS_BASE_HOST = os.getenv("APP_REDIS_BASE_HOST")
+APP_REDIS_BASE_PORT = int(os.getenv("APP_REDIS_BASE_PORT"))
+APP_REDIS_BASE_PASS = os.getenv("APP_REDIS_BASE_PASS")
 
 CELERY_BROKER_URL = get_redis_url(
     host=APP_REDIS_BASE_HOST, port=APP_REDIS_BASE_PORT, password=APP_REDIS_BASE_PASS, db=0
@@ -112,13 +124,20 @@ APP_REDIS_THROTTLING_NODE = get_redis_url(
 )
 
 # Database
-DB_USER = dpath_value(os.environ, "APP_POSTGRES_USER", str)
-DB_HOST = dpath_value(os.environ, "APP_POSTGRES_HOST", str)
-DB_PASS = dpath_value(os.environ, "APP_POSTGRES_PASSWORD", str, default="")
-DB_NAME = dpath_value(os.environ, "APP_POSTGRES_DB_NAME", str)
-DB_ENGINE = dpath_value(os.environ, "APP_DB_ENGINE", str)
-DB_CONNECT_OPTS = dpath_value(os.environ, "APP_POSTGRES_CONNECT_OPTS", str, default=None)
-DB_PORT = dpath_value(os.environ, "APP_POSTGRES_PORT", int, default=None)
+# DB_USER = dpath_value(os.environ, "APP_POSTGRES_USER", str)
+# DB_HOST = dpath_value(os.environ, "APP_POSTGRES_HOST", str)
+# DB_PASS = dpath_value(os.environ, "APP_POSTGRES_PASSWORD", str, default="")
+# DB_NAME = dpath_value(os.environ, "APP_POSTGRES_DB_NAME", str)
+# DB_ENGINE = dpath_value(os.environ, "APP_DB_ENGINE", str)
+# DB_CONNECT_OPTS = dpath_value(os.environ, "APP_POSTGRES_CONNECT_OPTS", str, default=None)
+# DB_PORT = dpath_value(os.environ, "APP_POSTGRES_PORT", int, default=None)
+DB_USER = os.getenv("APP_POSTGRES_USER")
+DB_HOST = os.getenv("APP_POSTGRES_HOST")
+DB_PASS = os.getenv("APP_POSTGRES_PASSWORD", default="")
+DB_NAME = os.getenv("APP_POSTGRES_DB_NAME")
+DB_ENGINE = os.getenv("APP_DB_ENGINE")
+DB_CONNECT_OPTS = os.getenv("APP_POSTGRES_CONNECT_OPTS", default=None)
+DB_PORT = int(os.getenv("APP_POSTGRES_PORT"))
 
 DATABASES = {
     "default": {
@@ -131,7 +150,8 @@ DATABASES = {
         "PORT": DB_PORT,
     },
 }
-APP_NAME = dpath_value(os.environ, "APP_NAME", str, default=None)
+#APP_NAME = dpath_value(os.environ, "APP_NAME", str, default=None)
+APP_NAME = os.getenv("APP_NAME")
 
 # loggers
 LOGGING = {
@@ -250,8 +270,13 @@ APP_CELERY_TASK_QUEUES = [APP_CELERY_DEFAULT_QUEUE]
 APP_CELERY_TASK_TIMEOUT = 10
 
 # auth
-APP_JWT_SECRET_KEY = dpath_value(os.environ, "APP_JWT_SECRET_KEY", str)
+APP_JWT_SECRET_KEY = os.getenv("APP_JWT_SECRET_KEY")
+#APP_JWT_SECRET_KEY = dpath_value(os.environ, "APP_JWT_SECRET_KEY", str)
 APP_JWT_ALGORITHM = "HS256"
 
-APP_MOCKING = dpath_value(os.environ, "APP_MOCKING", str, transform=transform_boolean, default=False)
-APP_EXCHANGE_RATES_API_URL = dpath_value(os.environ, "APP_EXCHANGE_RATES_API_URL", str)
+APP_MOCKING = bool(os.getenv("APP_MOCKING"))
+APP_EXCHANGE_RATES_API_URL = os.getenv("APP_EXCHANGE_RATES_API_URL")
+#APP_MOCKING = dpath_value(os.environ, "APP_MOCKING", str, transform=transform_boolean, default=False)
+#APP_EXCHANGE_RATES_API_URL = dpath_value(os.environ, "APP_EXCHANGE_RATES_API_URL", str)\
+
+COVERAGE_REPORT_HTML_OUTPUT_DIR = os.path.join(os.getcwd(), 'cover')
