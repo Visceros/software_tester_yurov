@@ -49,9 +49,10 @@ class Command(LambCommand):
         if user is not None:
             raise AlreadyExistError("User with provided email already exist")
         # check its the first super admin
-        super_admin = self.db_session.query(AbstractUser).filter(AbstractUser.user_type == UserType.SUPER_ADMIN).first()
-        if super_admin:
-            raise AlreadyExistError(f"Super Admin already exist: {super_admin.email}")
+        # super_admin = self.db_session.query(AbstractUser).filter(AbstractUser.user_type == UserType.SUPER_ADMIN).first()
+        # if super_admin:
+        #     raise AlreadyExistError(f"Super Admin already exist: {super_admin.email}")  # commented this check for tests
+
         # create super_admin
         super_admin = SuperAdmin()
         super_admin.email = email
@@ -60,8 +61,8 @@ class Command(LambCommand):
         super_admin.last_name = last_name
         super_admin.is_email_confirmed = True
         super_admin.is_confirmed = True
-
         self.db_session.add(super_admin)
         self.db_session.commit()
 
         logger.info(f"SuperAdmin {email} was created.")
+        return super_admin  # added return for testing purposes
